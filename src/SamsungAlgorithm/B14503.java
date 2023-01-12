@@ -29,7 +29,7 @@ public class B14503 {
     public static boolean[][] cleaned;
     public static Queue<Node> path;
 
-    public static void cleaning(Node start, int dir)
+    public static void cleaning(Node start, int dir) // 청소 해주고 청소한 공간수 더해주는 함수
     {
         path.offer(start); // 시작 점 큐에 넣어주기
         int redir = dir; // 방향
@@ -108,26 +108,19 @@ public class B14503 {
                 redir = 2;
             }
 
+            // 체크하는 곳이 만약 테두리(무조건 벽인 공간)까지 갔거나, 벽이거나, 이미 청소한 공간이라면
             if (nr < 1 || nc < 1 || nr >= N - 1 || nc >= M - 1 || area[nr][nc] == 1 || cleaned[nr][nc] == true)
             {
-                rdcnt++;
-                path.offer(new Node(tr, tc));
+                rdcnt++; // 방향 바꾼 횟수++;
+                path.offer(new Node(tr, tc)); // 방향만 바뀐 채로 그 자리를 다시 큐에 넣어주기
             }
-            else
+            else // 청소 가능한 공간이라면
             {
-                rdcnt = 0;
-                path.offer(new Node(nr, nc));
+                rdcnt = 0; // 방향 바꾼 횟수 초기화
+                path.offer(new Node(nr, nc)); // 그 공간으로 이동
             }
         }
     }
-    /*
-    1. 왼편 청소 여부 체크 (redir == 0 ? 3 : dir - 1)
-    1-1) 안했고 빈공간임 => 청소하고 해당 장소로 이동 (redir 방향으로)
-    1-2) 이미했거나 벽임 => 왼쪽으로 회전 후 다시 왼편 체크 (redir == 0 ? 3 : dir - 1)
-    1-3) 4 방향 모두 이미 했거나 벽임 => dir 반대로 후진
-    1-4) 뒤가 벽이라서 후진도 할 수 없음(area[nr][nc] == 1) => return ;
-     */
-
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
