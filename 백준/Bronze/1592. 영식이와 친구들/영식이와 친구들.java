@@ -16,12 +16,12 @@ public class Main {
         int throwCnt = 0;
         while (tillM[cur] < M)
         {
-            if (++tillM[cur] >= M) break;
+            if (++tillM[cur] >= M) break; // 선행 연산자로 먼저 받고 최대로 받는 횟수와 비교해서 루프 탈출
 //            System.out.printf(cur + " => ");
-            if (((tillM[cur]) & 1) == 1) cur = (cur + L - 1) % N + 1;
-            else cur = ((cur - L - 1) + N) % N + 1;
+            if (((tillM[cur]) & 1) == 1) cur = (cur + L - 1) % N + 1; // 홀수 번 받음 => L만큼 오른쪽으로 // 딱 N일 때 0이 되어버리는 걸 방지하기 위해서 -1을 먼저 해주고 나머지 구한 후에 +1
+            else cur = ((cur - L - 1) + N) % N + 1; // 짝수 번 받음 => L만큼 왼쪽으로 // 딱 0일때 그대로 0이 되어버리는 걸 방지하기 위해서 -1을 먼저 해주고 나머지를 구한 후에 +1
 //            System.out.println(cur);
-            throwCnt++;
+            throwCnt++; // 던진 횟수 + 1
         }
         ans.append(throwCnt);
         bw.write(ans.toString());
