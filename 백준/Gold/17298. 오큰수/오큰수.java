@@ -9,26 +9,27 @@ public class Main {
         int N = Integer.parseInt(br.readLine());
 		Stack<Integer> stackA = new Stack<>();
 		Stack<Integer> stackB = new Stack<>();
-		int[] nums = new int[N + 1];
+		int[] nums = new int[N];
+		int[] OBigNum = new int[N];
 		StringTokenizer st = new StringTokenizer(br.readLine());
-		for (int i = 0; i < N; i++) stackA.add(Integer.parseInt(st.nextToken()));
-		int index = N;
-		while (index > 0)
+		for (int i = 0; i < N; i++) nums[i] = Integer.parseInt(st.nextToken());
+		int index = N - 1;
+		while (index >= 0)
 		{
 			if (stackB.isEmpty()) {
-				stackB.add(stackA.pop());
-				nums[index--] = -1;
+				stackB.add(nums[index]);
+				OBigNum[index--] = -1;
 			}
 			else
 			{
-				int tmp = stackA.pop();
+				int tmp = nums[index];
 				while (!stackB.isEmpty() && tmp >= stackB.peek()) stackB.pop();
-				if (!stackB.isEmpty()) nums[index--] = stackB.peek();
-				else nums[index--] = -1;
+				if (!stackB.isEmpty()) OBigNum[index--] = stackB.peek();
+				else OBigNum[index--] = -1;
 				stackB.add(tmp);
 			}
 		}
-		for (int i = 1; i <= N; i++) ans.append(nums[i]).append(" ");
+		for (int i = 0; i < N; i++) ans.append(OBigNum[i]).append(" ");
     	bw.write(ans.toString());
     	br.close();
     	bw.close();
