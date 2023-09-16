@@ -59,8 +59,8 @@ public  class Main {
 							{
 								if (vertexColors[end] == vertexColors[start]) // 같은 간선에 속한 정점의 색이 같으면 이분 그래프가 될 수 없음!!
 								{
-									flag = true;
-									break loop;
+									flag = true; // 이분 그래프가 될 수 없다는 flag On!
+									break loop; // 아예 나가기
 								}
 							}
 						}
