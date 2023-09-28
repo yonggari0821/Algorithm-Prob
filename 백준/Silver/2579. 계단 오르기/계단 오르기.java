@@ -19,8 +19,8 @@ public class Main {
             dp[1][2] = 0;
             for (int i = 2; i <= N; i++)
             {
-                dp[i][0] = dp[i-1][2];
-                dp[i][1] = Math.max(dp[i-1][0], dp[i-2][1]) + stairs[i];
+                dp[i][0] = Math.max(dp[i-1][2], dp[i-2][1]);
+                dp[i][1] = Math.max(dp[i-1][0], Math.max(dp[i-2][1], dp[i-2][2])) + stairs[i];
                 dp[i][2] = Math.max(dp[i-1][1], dp[i-2][2]) + stairs[i];
             }
             tmp = Math.max(dp[N][1], dp[N][2]);
