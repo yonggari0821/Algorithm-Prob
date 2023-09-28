@@ -1,42 +1,25 @@
 import java.io.*;
 import java.util.*;
+
 public class Main {
-    static StringBuilder ans = new StringBuilder();
-    static int N;
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        N = Integer.parseInt(br.readLine());
-        int[] stairs = new int[N+1];
-        int[][] dp = new int[N+1][3];
-        for (int i = 1; i <= N; i++) stairs[i] = Integer.parseInt(br.readLine());
-        int tmp = 0;
-        if (N < 3) for (int i = 1; i <= N; i++) tmp += stairs[i];
-        else
-        {
-            dp[1][0] = 0;
-            dp[1][1] = stairs[1];
-            dp[1][2] = 0;
-            for (int i = 2; i <= N; i++)
-            {
-                dp[i][0] = Math.max(dp[i-1][2], dp[i-2][1]);
-                dp[i][1] = Math.max(dp[i-1][0], Math.max(dp[i-2][1], dp[i-2][2])) + stairs[i];
-                dp[i][2] = Math.max(dp[i-1][1], dp[i-2][2]) + stairs[i];
-            }
-            tmp = Math.max(dp[N][1], dp[N][2]);
-        }
-//        System.out.println(Arrays.deepToString(dp));
-        ans.append(tmp);
-        bw.write(ans.toString());
-        br.close();
-        bw.flush();
-        bw.close();
-    }
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+		StringBuilder ans = new StringBuilder();
+		int N = Integer.parseInt(br.readLine()); // 계단 갯수 300 이하의 자연수이므로 최소 1
+		int[] stairs = new int[N + 1]; // 계단 밟았을 때 얻는 점수 배열
+		int[] dp = new int[N + 1]; // dp용 배열 => 해당 계단을 밟았을 때까지의 최대 합을 메모
+		for (int n = 1; n <= N; n++) stairs[n] = Integer.parseInt(br.readLine());
+		dp[1] = stairs[1];
+		for (int i = 2; i <= N; i++)
+		{
+			if (i == 2) dp[i] = Math.max(dp[i - 1], dp[i - 2]) + stairs[i];
+			else dp[i] = Math.max(dp[i - 3] + stairs[i - 1], dp[i - 2]) + stairs[i];
+		}
+//		System.out.println(Arrays.toString(dp));
+		ans.append(dp[N]);
+		bw.write(ans.toString());
+		br.close();
+		bw.close();
+	}
 }
-
-/*
-연속 3칸 금지
-1칸 또는 2칸씩 이동
-마지막 계단은 무조건 밟아야 함
-
- */
