@@ -29,15 +29,14 @@ public class Main {
 			StringTokenizer st = new StringTokenizer(br.readLine());
 			for (int n = 0; n < N; n++) note1[n] = Integer.parseInt(st.nextToken());
 			Arrays.sort(note1); // 정렬까지 해둘 것! (이분탐색으로 찾을 것이기 때문에)
-			
+
 			// 노트 2
 			int M = Integer.parseInt(br.readLine());
-			int[] note2 = new int[M];
 			st = new StringTokenizer(br.readLine());
 			for (int n = 0; n < M; n++) {
-				int tmp = Integer.parseInt(st.nextToken());
-				note2[n] = bs(note1, tmp) ? 1 : 0; // 노트 1에 있으면 1 // 없으면 0 
-				ans.append(note2[n]).append('\n');
+				if (bs(note1, Integer.parseInt(st.nextToken()))) ans.append(1);
+				else ans.append(0);
+				ans.append('\n');
 			}
         }
     	bw.write(ans.toString());
