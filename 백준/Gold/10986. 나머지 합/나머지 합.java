@@ -67,13 +67,11 @@ public class Main {
 		long cnt = 0;
 		int N = Integer.parseInt(st.nextToken()); // 최대 100000
 		int M = Integer.parseInt(st.nextToken()); // 최대 1000
-		int[] nums = new int[N + 1];
 		int[] dp = new int[N + 1];
 		long[] remain = new long[M];
 		st = new StringTokenizer(br.readLine());
 		for (int i = 1; i <= N; i++) {
-			nums[i] = Integer.parseInt(st.nextToken());
-			dp[i] = (dp[i - 1] + nums[i]) % M; // 이렇게 하면 dp 배열의 값은 죽어도 M을 넘을 수 없음
+			dp[i] = (dp[i - 1] + Integer.parseInt(st.nextToken())) % M; // 이렇게 하면 dp 배열의 값은 죽어도 M을 넘을 수 없음
 			if (dp[i] == 0) cnt++;
 			remain[dp[i]]++;
 		}
