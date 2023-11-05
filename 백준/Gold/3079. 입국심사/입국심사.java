@@ -54,7 +54,7 @@ public class Main {
         int[] imagrationCheckTime = new int[N]; // 최대 10억 // int형도 무방
         for (int i = 0; i < N; i++) imagrationCheckTime[i] = Integer.parseInt(br.readLine());
         // 오름차순 정렬
-        Arrays.sort(imagrationCheckTime);
+//        Arrays.sort(imagrationCheckTime);
         long cnt;
         while (true)
         {
