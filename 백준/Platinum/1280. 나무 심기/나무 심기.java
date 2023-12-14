@@ -156,8 +156,8 @@ public class Main {
 				long rightSum = BUquerySum(trees[i] + 1, 200000) - BUqueryCnt(trees[i] + 1, 200000) * trees[i];
 //				System.out.println("leftSum = " + leftSum);
 //				System.out.println("righttSum = " + rightSum);
-				costs[i] = (leftSum + rightSum) % 1000000007;
-				aaa = aaa * costs[i] % 1000000007;
+				costs[i] = (leftSum + rightSum) % 1000000007; // 여기도 나눠줘야 안틀림!
+				aaa = aaa * costs[i] % 1000000007; // 왜냐면 여기서 기존 값에 먼저 곱하고 나누기 때문에 곱할 때 오버플로우가 가능!
 			}
 			// 업데이트 해줘야 함!
 			BUupdateCnt(trees[i]); // 원래 들어있는 값에 현재 좌표값이 자동으로 더해지고 업데이트 되게 됨!
