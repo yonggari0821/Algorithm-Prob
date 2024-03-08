@@ -1,81 +1,81 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
+
+/*
+
+가장 인접한 두 공유기의 거리가 최대가 되어야 함
+일단 공유기들의 위치를 받아두고
+1부터 공유기 (최댓값 - 최솟값) / (공유기 갯수 - 1)꺼자 이분탐색
+이 때, 가능한 최대 거리를 구해야 하므로
+안되는 거리 중 최솟값 - 1 하면 됨!
+
+ */
+
 
 public class Main {
-    static int N, size;
-    static long ans = 0;
-    static int[] A;
-    static int[] B;
-    static int[] C;
-    static int[] D;
-    static int[] AB;
-    static int[] CD;
-    static void BS(int start, int end)
-    {
-        while (start < size && end >= 0)
-        {
-            int v = AB[start] + CD[end];
-            if (v == 0)
-            {
-                int abcnt = 1;
-                int cdcnt = 1;
-                while (start < size - 1 && AB[start] == AB[start+1])
-                {
-                    start++;
-                    abcnt++;
-                }
-                while (end > 0 && CD[end] == CD[end-1])
-                {
-                    end--;
-                    cdcnt++;
-                }
-                ans += ((long)abcnt * (long)cdcnt);
-            }
-            if (v < 0)
-                start++;
-            else
-                end--;
-        }
-    }
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        N = Integer.parseInt(br.readLine());
-        size = N * N;
-        A = new int[N];
-        B = new int[N];
-        C = new int[N];
-        D = new int[N];
-        AB = new int[size];
-        CD = new int[size];
 
-        for (int i = 0; i < N; i++) {
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            A[i] = Integer.parseInt(st.nextToken());
-            B[i] = Integer.parseInt(st.nextToken());
-            C[i] = Integer.parseInt(st.nextToken());
-            D[i] = Integer.parseInt(st.nextToken());
-        }
+	static int n;
+	static long res = 0;
+	static int[] A, B, C, D;
+	static int[] AB;
+	static int[] CD;
 
-        for (int i = 0; i < N; i++)
-        {
-            for (int j = 0; j < N; j++)
-            {
-                AB[N*i+j] = A[i] + B[j];
-                CD[N*i+j] = C[i] + D[j];
-            }
-        }
+	static void bs(int left, int right)
+	{
+		while (left < n * n & right >= 0)
+		{
+			int plus = AB[left] + CD[right];
+			if (plus == 0)
+			{
+				long abcnt = 1;
+				long cdcnt = 1;
+				while( (left < (n * n - 1) ) && ( AB[left] == AB[left + 1] ) )
+				{
+					left++;
+					abcnt++;
+				}
+				while( (right > 0) && (CD[right] == CD[right - 1]) )
+				{
+					right--;
+					cdcnt++;
+				}
+				res += (abcnt * cdcnt);
+			}
+			if (plus < 0) left++;
+			else right--;
+		}
+	}
 
-        Arrays.sort(AB);
-        Arrays.sort(CD);
 
-        BS(0, size - 1);
-
-//        System.out.println(Arrays.toString(AB));
-//        System.out.println(Arrays.toString(CD));
-
-        System.out.println(ans);
-    }
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		n = Integer.parseInt(br.readLine());
+		StringTokenizer st;
+		A = new int[n];
+		B = new int[n];
+		C = new int[n];
+		D = new int[n];
+		AB = new int[n * n];
+		CD = new int[AB.length];
+		for (int i = 0; i < n; i++)
+		{
+			st = new StringTokenizer(br.readLine());
+			A[i] = Integer.parseInt(st.nextToken());
+			B[i] = Integer.parseInt(st.nextToken());
+			C[i] = Integer.parseInt(st.nextToken());
+			D[i] = Integer.parseInt(st.nextToken());
+		}
+		for (int i = 0; i < n; i++)
+		{
+			for (int j = 0; j < n; j++)
+			{
+				AB[i * n + j] = A[i] + B[j];
+				CD[i * n + j] = C[i] + D[j];
+			}
+		}
+		Arrays.sort(AB);
+		Arrays.sort(CD);
+		bs(0, n * n - 1);
+		System.out.println(res);
+	}
 }
