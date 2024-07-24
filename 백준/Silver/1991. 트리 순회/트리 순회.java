@@ -1,73 +1,75 @@
 import java.io.*;
-import java.util.StringTokenizer;
+import java.util.*;
 
-class node
-{
-    char me;
-    char left;
-    char right;
+/*
+백준 1991 트리 순회
 
-    public node(char m, char l, char r)
-    {
-        this.me = m;
-        this.left = l;
-        this.right = r;
+<풀이>
+
+ */
+
+class Node {
+    char cur;
+    Node left;
+    Node right;
+
+    public Node(char cur, Node left, Node right) {
+        this.cur = cur;
+        this.left = left;
+        this.right = right;
     }
 }
+
 public class Main {
-    static int N;
-    static node[] tree;
-    static StringBuilder ans;
-    static void preorder(node now)
-    {
-        ans.append(now.me);
-        if (now.left != '.')
-            preorder(tree[now.left-65]);
-        if (now.right != '.')
-            preorder(tree[now.right-65]);
-    }
-    static void midorder(node now)
-    {
-        if (now.left != '.')
-            midorder(tree[now.left-65]);
-        ans.append(now.me);
-        if (now.right != '.')
-            midorder(tree[now.right-65]);
-    }
-    static void postorder(node now)
-    {
-        if (now.left != '.')
-            postorder(tree[now.left-65]);
-        if (now.right != '.')
-            postorder(tree[now.right-65]);
-        ans.append(now.me);
-    }
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        ans = new StringBuilder();
-        N = Integer.parseInt(br.readLine());
-        tree = new node[N];
-        for (int n = 0; n < N; n++)
-        {
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            char tm = st.nextToken().charAt(0);
-            char tl = st.nextToken().charAt(0);
-            char tr = st.nextToken().charAt(0);
-            node tmp = new node(tm, tl, tr);
-            tree[tm-65] = tmp;
+    static void preTraverse(Node node) {
+        if (node != null) {
+            sb.append(node.cur);
+            preTraverse(node.left);
+            preTraverse(node.right);
         }
+    }
+    static void midTraverse(Node node) {
+        if (node != null) {
+            midTraverse(node.left);
+            sb.append(node.cur);
+            midTraverse(node.right);
+        }
+    }
+    static void postTraverse(Node node) {
+        if (node != null) {
+            postTraverse(node.left);
+            postTraverse(node.right);
+            sb.append(node.cur);
+        }
+    }
 
-        preorder(tree[0]);
-        ans.append('\n');
-        midorder(tree[0]);
-        ans.append('\n');
-        postorder(tree[0]);
+    static StringBuilder sb = new StringBuilder();
 
-        bw.write(ans.toString());
+    public static void main(String[]args) throws IOException {
 
-        br.close();
-        bw.flush();
-        bw.close();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        Node[] nodes = new Node[N];
+        for (int i = 0; i < N; i++) {
+            nodes[i] = new Node((char) ('A' + i), null, null);
+//            System.out.println("nodes[" + i + "] = " + (char) ('A' + 1 - i));
+        }
+        for (int i = 0; i < N; i++) {
+            st = new StringTokenizer(br.readLine());
+            char cur = st.nextToken().charAt(0);
+            char left = st.nextToken().charAt(0);
+            char right = st.nextToken().charAt(0);
+//            System.out.println(cur + " / " + left + " / " + right);
+            if (left != '.') nodes[cur - 'A'].left = nodes[left - 'A'];
+            if (right != '.') nodes[cur - 'A'].right = nodes[right - 'A'];
+        }
+        preTraverse(nodes[0]);
+        sb.append('\n');
+        midTraverse(nodes[0]);
+        sb.append('\n');
+        postTraverse(nodes[0]);
+        System.out.println(sb.toString());
     }
 }
+
