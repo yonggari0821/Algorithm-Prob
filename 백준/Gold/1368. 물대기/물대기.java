@@ -10,7 +10,7 @@ import java.util.*;
 여러 개의 논에 물들의 연결 망을
 1) 직접 우물을 파던지
 2) 다른 논의 물을 끌어오던지해서
-최소 비용으로 연결하는 문제이므로!
+최소 비용으로 연결하는 문제이므로 MST!
  */
 
 
@@ -31,7 +31,6 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int N = Integer.parseInt(br.readLine()); // 1 ~ 300
 
-        int[] selfWell = new int[N + 1];
         int[][] getWaterFromOtherWell = new int[N + 1][N + 1];
         for (int i = 1; i <= N; i++) getWaterFromOtherWell[i][i] = Integer.parseInt(br.readLine());
         StringTokenizer st;
@@ -50,19 +49,13 @@ public class Main {
                 return o1.cost - o2.cost;
             }
         });
-
-//        System.out.println(Arrays.deepToString(getWaterFromOtherWell));
-
-        boolean[] visited;
-        visited = new boolean[N + 1];
-        for (int i = 1; i <= N; i++) {
-            pq.offer(new Node(i, getWaterFromOtherWell[i][i]));
-        }
+        
+        boolean[] visited = new boolean[N + 1];
+        for (int i = 1; i <= N; i++) pq.offer(new Node(i, getWaterFromOtherWell[i][i]));
+        
         int tmp = 0;
         int visitedWellNum = 0;
-
-//            System.out.println("i = " + i);
-
+        
         while(!pq.isEmpty())
         {
             Node cur = pq.poll();
@@ -70,18 +63,14 @@ public class Main {
             visited[cur.num] = true;
             visitedWellNum++;
             tmp += cur.cost;
-//                System.out.println("cur.num = " + cur.num + " cur.cost = " + cur.cost);
-            if (visitedWellNum == N) {
-                pq.clear();
-                break;
-            }
+            if (visitedWellNum == N) break;
             for (int j = 1; j <= N; j++) {
                 if (j == cur.num) continue;
                 if (!visited[j]) pq.offer(new Node(j, Math.min(getWaterFromOtherWell[j][j], getWaterFromOtherWell[cur.num][j])));
             }
         }
+        
         min = Math.min(min, tmp);
-
         System.out.println(min);
     }
 }
