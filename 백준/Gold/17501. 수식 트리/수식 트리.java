@@ -41,19 +41,21 @@ public class Main {
     static int front, rear;
 
     static int postTraverse(Node node, int minusCnt) {
+        // 현재 노드가 피연산자인 경우
+        // 만약 - 의 개수가
+        // 홀수인 경우 더 큰 수를 가져와서 놓고 빼야하고, --> numArr[rear--]
+        // 짝수인 경우 더 작은 수를 가져와서 놓고 빼야 함. --> numArr[front++]
         if (node.cur == Integer.MIN_VALUE + 1) {
             return (minusCnt % 2 == 0) ? numArr[rear--] : numArr[front++];
         }
 
+        // 왼쪽 값 및 오른쪽 값
         int lv = postTraverse(node.left, minusCnt);
         int rv = postTraverse(node.right, node.cur == Integer.MIN_VALUE ? minusCnt + 1 : minusCnt);
 
-        // Apply operation
-        if (node.cur == Integer.MAX_VALUE) {
-            return lv + rv;
-        } else {
-            return lv - rv;
-        }
+        // 만약 현재 노드가 + 라면
+        if (node.cur == Integer.MAX_VALUE) return lv + rv;
+        else return lv - rv;
     }
 
     public static void main(String[]args) throws IOException {
@@ -64,9 +66,11 @@ public class Main {
         Node[] numTree = new Node[2 * N];
         numArr = new int[N];
 
+        // 피연산자 노드들은 첨부터 배정하지 않고 따로 숫자 배열로 뽑아두고 정렬해둠
         for (int i = 1; i <= N; i++) {
             st = new StringTokenizer(br.readLine());
             numArr[i - 1] = Integer.parseInt(st.nextToken());
+            // 처음에 임시로 Integer.MIN_VALUE + 1을 넣어 둠 // 피연산자(숫자) 노드라는 뜻으로!
             numTree[i] = new Node(Integer.MIN_VALUE + 1, null, null);
         }
         Arrays.sort(numArr);
@@ -79,15 +83,19 @@ public class Main {
             boolean isPlus = st.nextToken().charAt(0) == '+';
             int left = Integer.parseInt(st.nextToken());
             int right = Integer.parseInt(st.nextToken());
+            // + 이면 Integer 최대값, - 이면 Integer 최소값을 넣음
             numTree[i] = new Node(isPlus ? Integer.MAX_VALUE : Integer.MIN_VALUE, null, null);
+            // 왼쪽/오른쪽 노드 번호 저장
             tmp[i - N - 1][0] = left;
             tmp[i - N - 1][1] = right;
         }
+        // 저장해둔 노드 번호로 실제 노드값을 배정
         for (int i = 0; i < N - 1; i++) {
-            numTree[i + N + 1].left = numTree[tmp[i][0]];
-            numTree[i + N + 1].right = numTree[tmp[i][1]];
+            numTree[i + N + 1].left = numTree[ tmp[i][0] ];
+            numTree[i + N + 1].right = numTree[ tmp[i][1] ];
         }
 
+        // 루트 노드인 2 * N - 1를 집어넣어 주고 후위순회
         int res = postTraverse(numTree[2 * N - 1], 0);
         System.out.println(res);
     }
