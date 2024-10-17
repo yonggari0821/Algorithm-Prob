@@ -43,13 +43,14 @@ public class Main {
         int maxindex = 1; // 최대 LIS 길이를 갖는 수의 위치
         for (int i = 1; i <= N; i++)
         {
+            int tmpmaxLISminindex = maxLIS;
             if (nums[i] < LISmin[maxLIS])
             {
 //                while (tmpmaxLISminindex > 0 && nums[i] <= LISmin[tmpmaxLISminindex])
 //                    tmpmaxLISminindex--;
 //                => 이렇게 하면 시간초과남 => 100만개 이므로!! => 이분탐색이 필요!
 
-                int tmpmaxLISminindex = BS(1, maxLIS, nums[i]);
+                tmpmaxLISminindex = BS(1, maxLIS, nums[i]);
                 if (tmpmaxLISminindex == 0)
                 {
                     LISmin[1] = nums[i];
