@@ -1,98 +1,100 @@
 import java.io.*;
-import java.util.Arrays;
-import java.util.Stack;
-import java.util.StringTokenizer;
+import java.util.*;
+
+/*
+백준 14003
+가장 긴 증가하는 부분 수열 5
+
+[문제]
+수열 A가 주어졌을 때, 가장 긴 증가하는 부분 수열을 구하는 프로그램을 작성하시오.
+
+예를 들어,
+수열 A = {10, 20, 10, 30, 20, 50} 인 경우에
+가장 긴 증가하는 부분 수열은 A = {10, 20, 10, 30, 20, 50} 이고,
+길이는 4이다.
+*/
 
 public class Main {
-    static int N;
-    static int[] nums;
-    static int[] LIS;
-    static int[] LISmin;
-    static int[] whereLISmin;
-    static int[] Tracing;
-
-    static int BS(int start, int end, int target) // target = nums[i]
+    // 이진 탐색 함수: LISMin 배열에서 적절한 위치를 찾는다
+    static int binarySearch(int l, int r, int t)
     {
-        while (start <= end)
+        while (l <= r)
         {
-            int mid = start + (end - start) / 2;
-
-            if (target <= LISmin[mid]) end = mid - 1;
-            else start = mid + 1;
+            int m = l + (r - l) / 2;  // 중간 인덱스 계산
+            if (t <= LISMin[m]) r = m - 1;  // 타겟이 중간값 이하면 왼쪽 탐색
+            else l = m + 1;  // 타겟이 중간값보다 크면 오른쪽 탐색
         }
-        return end;
+        return r;  // 적절한 위치 반환
     }
 
-    public static void main(String[] args) throws IOException {
+    static int N;  // 수열의 길이
+    static int[] A;  // 입력 수열
+    static int[] LIS;  // 각 원소의 LIS 길이
+    static int[] LISMin;  // 각 길이에 대한 최소 끝 값
+    static int[] WhereLISMin;  // LISMin의 각 값의 원래 위치
+    static int[] Tracing;  // LIS 추적을 위한 배열
+
+    static int maxLen = 1;  // 현재 가장 긴 증가하는 부분 수열의 길이
+    static int maxIdx = 1;  // 현재 가장 긴 증가하는 부분 수열의 마지막 원소 인덱스
+
+    public static void main(String[]args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        N = Integer.parseInt(br.readLine());
-        nums = new int[N+1]; // 입력 받은 숫자 배열
-        LIS = new int[N+1]; // 자기까지 가능한 LIS 길이 배열
-        LISmin = new int[N+1]; // LIS 판단 위한 각 길이별 최솟값 배열
-        whereLISmin = new int[N+1]; // 해당 최솟값이 nums 배열에서 어디 있는 지 배열 => Tracing 배열 때문에 쓰임
-        Tracing = new int[N+1]; //
+        N = Integer.parseInt(br.readLine());  // 수열의 길이 입력
+
+        // 배열 초기화
+        A = new int[N + 1];
+        LIS = new int[N + 1];
+        LISMin = new int[N + 1];
+        WhereLISMin = new int[N + 1];
+        Tracing = new int[N + 1];
+
         StringTokenizer st = new StringTokenizer(br.readLine());
-        for (int i = 1; i <= N; i++)
-        {
-            nums[i] = Integer.parseInt(st.nextToken());
-            LISmin[i] = Integer.MAX_VALUE;
+        for (int i = 1; i <= N; i++) {
+            A[i] = Integer.parseInt(st.nextToken());  // 수열 입력
+            LISMin[i] = Integer.MAX_VALUE;  // LISMin 초기화
         }
 
-        int maxLIS = 1; // 지금까지 나온 최대 LIS 길이
-        int maxindex = 1; // 최대 LIS 길이를 갖는 수의 위치
-        for (int i = 1; i <= N; i++)
-        {
-            int tmpmaxLISminindex = maxLIS;
-            if (nums[i] < LISmin[maxLIS])
-            {
-//                while (tmpmaxLISminindex > 0 && nums[i] <= LISmin[tmpmaxLISminindex])
-//                    tmpmaxLISminindex--;
-//                => 이렇게 하면 시간초과남 => 100만개 이므로!! => 이분탐색이 필요!
+        for (int i = 1; i <= N; i++) {
+            // 현재 원소가 LIS의 마지막 원소보다 작은 경우
+            if (A[i] < LISMin[maxLen]) {
+                int tmpIdx = binarySearch(1, maxLen, A[i]);  // 적절한 위치 찾기
 
-                tmpmaxLISminindex = BS(1, maxLIS, nums[i]);
-                if (tmpmaxLISminindex == 0)
-                {
-                    LISmin[1] = nums[i];
-                    whereLISmin[1] = i;
+                if (tmpIdx == 0) {  // 가장 작은 원소인 경우
+                    LISMin[1] = A[i];
+                    WhereLISMin[1] = i;
                 }
-                else
-                {
-                    LISmin[tmpmaxLISminindex + 1] = nums[i];
-                    whereLISmin[tmpmaxLISminindex + 1] = i;
+                else {  // 중간에 삽입되는 경우
+                    LISMin[tmpIdx + 1] = A[i];
+                    WhereLISMin[tmpIdx + 1] = i;
                 }
-                LIS[i] = tmpmaxLISminindex + 1;
-                Tracing[i] = whereLISmin[tmpmaxLISminindex];
-            }
-            else if (nums[i] > LISmin[maxLIS])
-            {
-                maxindex = i;
-                Tracing[i] = whereLISmin[maxLIS];
-                maxLIS++;
-                LISmin[maxLIS] = nums[i];
-                whereLISmin[maxLIS] = i;
-                LIS[i] = maxLIS;
-            }
 
+                LIS[i] = tmpIdx + 1;  // 현재 원소의 LIS 길이 저장
+                Tracing[i] = WhereLISMin[tmpIdx];  // 이전 원소 추적
+            }
+            // 현재 원소가 LIS의 마지막 원소보다 큰 경우
+            else if (A[i] > LISMin[maxLen]) {
+                maxIdx = i;  // 최대 길이 갱신
+                Tracing[i] = WhereLISMin[maxLen];  // 이전 원소 추적
+                maxLen++;  // 최대 길이 증가
+                LISMin[maxLen] = A[i];  // 새로운 최대 길이의 최소값 갱신
+                WhereLISMin[maxLen] = i;  // 위치 저장
+                LIS[i] = maxLen;  // 현재 원소의 LIS 길이 저장
+            }
         }
-//        System.out.println(maxindex);
-//        System.out.println(Arrays.toString(nums));
-//        System.out.println(Arrays.toString(LIS));
-//        System.out.println(Arrays.toString(LISmin));
-//        System.out.println(Arrays.toString(whereLISmin));
-//        System.out.println(Arrays.toString(Tracing));
-//        System.out.println("-----");
 
-        Stack<Integer> Output = new Stack<>();
-        for (int i = maxLIS-1; i >= 0; i--)
-        {
-            Output.push(nums[maxindex]);
-            maxindex = Tracing[maxindex];
+        // 결과 출력을 위한 스택 생성
+        Stack<Integer> output = new Stack<>();
+        for (int i = maxLen - 1; i >= 0; i--) {
+            output.push(A[maxIdx]);  // LIS의 원소를 스택에 저장
+            maxIdx = Tracing[maxIdx];  // 이전 원소로 이동
         }
+
+        // 결과 문자열 생성
         StringBuilder sb = new StringBuilder();
-        sb.append(maxLIS).append('\n');
-        for (int i = 0; i < maxLIS; i++)
-            sb.append(Output.pop()).append(" ");
+        sb.append(maxLen).append('\n');  // LIS의 길이 출력
+
+        // LIS의 원소들을 순서대로 출력
+        for (int i = 0; i < maxLen; i++) sb.append(output.pop()).append(" ");
         System.out.println(sb.toString());
         br.close();
     }
