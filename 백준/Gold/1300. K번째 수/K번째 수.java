@@ -1,81 +1,173 @@
 import java.io.*;
 import java.util.*;
+
 /*
+백준 1300 K번째 수
 
-[풀이]
-<N = 3 / K = 7>
+N×N인 배열 A
+배열에 들어있는 수 A[i][j] = i×j
+이 수를 일차원 배열 B에 넣으면 B의 크기는 N×N
+B를 오름차순 정렬했을 때, B[k]를 구해보자.
 
-1 2 3
-2 4 6
-3 6 9
+N이 3이고 K는 7이면
 
-1 2 3 2 4 6  3  6 9
-1 2 2 3 3 4 '6' 6 9
+A는
+{
+    {1, 2, 3},
+    {2, 4, 6},
+    {3, 6, 9}
+}
+이고
 
-N의 범위는 1 ~ 100000
-100000 x 100000 = 100억
-당연히 배열 생성 불가
-정렬도 당연히 불가
+이를 일렬로 나열한 상태는
+{1,2,3,2,4,6,3,6,9}
+이고 이를 오름차순 정렬한 B는
+{1,2,2,3,3,4,6,6,9}
+이므로
 
-1 2 3 4  5  6  7
-2 4 6 8  10 12 14
-3 6 9 12 15 18 21
-4 8
-5 10
-6 12
-7 14
+K가 7이라면
+답인 B[k == 7]은 7번째 수인 6이 된다.
 
-1 1개 1x1
-2 2개 1x2 2x1
-3 2개 1x3 3x1
-4 3개 1x4 2x2 4x1
+
+Q) 그냥 Arrays.sort하고 k번째 수 반환하면 되는 거 아니야?
+A) 일반적으로 Arrays.sort는 가장 효율적인 시간복잡도를 자랑하지만 그럼에도 불구하고 O(N logN) 정도의 시간 복잡도를 갖는다.
+지금 N은 10의 5승 즉, 10만이므로
+10만 x log10만(약, 16~17) = 160만 170만번 정도의 연산을 해야 한다.
+
+Q) 오? 가능해보이는데?
+A) 정렬을 하는 건 둘째 치고 배열을 못 만든다.
+10만 x 10만은 100억인데 100억 개의 수를 넣을 수 있는 배열을 만들 수 있는가?
+
+Q) 그럼 어떻게 풀어야 되는데?
+A) 규칙성을 찾아서 배열을 만들지 않고 풀어야 함.
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(br.readLine()); // <= 10의 5승
+//        K = Integer.parseInt(br.readLine()); // <= min(10의 9승, N의 2승)
+        int[][] arr = new int[N][N];
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) arr[i][j] = (i + 1) * (j + 1);
+        }
+        int[] brr = new int[N * N];
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) brr[N * i + j] = arr[i][j];
+        }
+        Arrays.sort(brr);
+
+        System.out.println("-----[arr]-----");
+        for (int i = 0; i < N; i++) System.out.println(Arrays.toString(arr[i]));
+        System.out.println("-----[arr]-----\n");
+        System.out.println("-----[brr]-----");
+        System.out.println(Arrays.toString(brr));
+        System.out.println("-----[brr]-----\n");
+
+이 코드로 N값을 넣어가면서 출력해가면서 규칙성을 찾다보면
+
+<N == 5>
+[1, 2, 3, 4, 5]
+[2, 4, 6, 8, 10]
+[3, 6, 9, 12, 15]
+[4, 8, 12, 16, 20]
+[5, 10, 15, 20, 25]
+
+<N == 6>
+[1, 2, 3, 4, 5, 6]
+[2, 4, 6, 8, 10, 12]
+[3, 6, 9, 12, 15, 18]
+[4, 8, 12, 16, 20, 24]
+[5, 10, 15, 20, 25, 30]
+[6, 12, 18, 24, 30, 36]
+
+<N == 7>
+[1, 2, 3, 4, 5, 6, 7]
+[2, 4, 6, 8, 10, 12, 14]
+[3, 6, 9, 12, 15, 18, 21]
+[4, 8, 12, 16, 20, 24, 28]
+[5, 10, 15, 20, 25, 30, 35]
+[6, 12, 18, 24, 30, 36, 42]
+[7, 14, 21, 28, 35, 42, 49]
+
+<N == 8>
+[1, 2, 3, 4, 5, 6, 7, 8]
+[2, 4, 6, 8, 10, 12, 14, 16]
+[3, 6, 9, 12, 15, 18, 21, 24]
+[4, 8, 12, 16, 20, 24, 28, 32]
+[5, 10, 15, 20, 25, 30, 35, 40]
+[6, 12, 18, 24, 30, 36, 42, 48]
+[7, 14, 21, 28, 35, 42, 49, 56]
+[8, 16, 24, 32, 40, 48, 56, 64]
+
+각 수와 등장하는 횟수 그리고 그게 뭔지를 살펴보면
+1 1 (1)
+2 2 (1,2)
+3 2 (1,3)
+4 3 (1,2,4)
+5 2 (1,5)
+6 4 (1,2,3,6)
+7 2 (1,7)
+8 4 (1,2,4,8)
 .
 .
 .
-n 은 n의 약수들 갯수만큼 존재!
-그런데
-1 2 2 3 2 4 2 4 3 4 ... => 딱히 공식이 안보임
-하나하나 봐야될 거 같은데
-1) 각 숫자별 등장 횟수 배열
-2) 배열 1)의 누적합 배열
-=> 둘 다 어차피 갯수의 합이므로 int로 선언해도 무방!
+n n의 약수 갯수
+의 규칙을 찾을 수 있다.
 
-K를 넣었을 때 1부터
-1) 배열 채우고
-2) 배열 채우고
-2) 배열의 값이 K보다 같거나 커지면 해당 숫자가 답
+따라서 1부터 N까지로 구하고자 하는 인덱스로 나누면 해당 수의 갯수를 구할 수 있다.
+이게 무슨 말이냐면
+예컨대 N이 넉넉하다는 가정하에
+13번째 인덱스를 구해보자.
+그럼
+13 / 1 = 13 => 1~13까지의 모든 수가 들어감
+13 / 2 = 6.5 == 6 => 2,4,6,8,10,12가 들어감
+13 / 3 = 4.xxx == 4 => 3, 6, 9, 12가 들어감
+.
+.
+.
+13 / 13 = 1 => 13이 들어감
+13 / 14 = 0.xxx == 0 => 여기서 부터는 안들어감
 
-근데 1) 배열의 크기를 어떻게 정할 건데? => 모르겠음
+이런식으로 13번째 인덱스 앞에 들어가는 13번째 인덱스보다 작은 값들의 갯수를 구할 수 있다.
 
-K는 Math.min(10의 9승, N의 2승)보다 작거나 같음
+13번째 인덱스에 있는 값과 동일 한 값이 12번째 인덱스에도, 14번째 인덱스에도 그리고 아주 많이 있을 수도 있으므로,
+이분탐색을 통해 lbs를 구해야 한다.
 
+이제 이걸 이분탐색을 활용해서 찾는다면
+1~100억 중 원하는 수를
+log 100억 == 33.219280948874 번만에 찾을 수 있다.
+
+N이 최대 10만이라고 했으니 최악의 경우라도 330만회 정도의 연산만을 하는 것이다.
 */
 
 public class Main {
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-		StringBuilder ans = new StringBuilder();
-		int N = Integer.parseInt(br.readLine());
-		int K = Integer.parseInt(br.readLine());
-		long left = 1;
-		long right = K;
-		while (left <= right)
-		{
-			long mid = left + (right - left) / 2;
-			long cnt = 0;
-			for (int i = 1; i <= N; i++)
-			{
-				long numsOfsmallerNumsFromRowI = mid / i;
-				if (numsOfsmallerNumsFromRowI == 0) continue;
-				cnt += Math.min(numsOfsmallerNumsFromRowI, N);
-			}
-			if (cnt >= K) right = mid - 1;
-			else left = mid + 1;
-		}
-		ans.append(left);
-		bw.write(ans.toString());
-		br.close();
-		bw.close();
-	}
+    static int N, K;
+    static StringBuilder sb = new StringBuilder();
+
+    public static void main(String[]args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(br.readLine()); // A 배열의 행 및 열의 크기 <= 10의 5승
+        K = Integer.parseInt(br.readLine()); // 찾아야 할 idx <= min(10의 9승, N의 2승)
+        // K의 범위를 생각해서 Long으로 지정
+        long l = 1;
+        long r = K;
+        while (l < r)
+        {
+            long m = (l + r) / 2;
+            // 이 갯수도 Integer범위를 상회할 수 있으므로 Long으로 설정
+            long cnt = 0;
+            // m이라는 숫자보다 작은 배열 내의 숫자 갯수를 구하기 (위 주석 참고)
+            for (int i = 1; i <= N; i++) {
+                long tmp = (m / i);
+                // m보다 큰 값인 경우 for문 벗어나기
+                if (tmp == 0) break;
+                // N보다 큰 경우에는 N으로 맞춰줌(가장 작은 1단의 경우라도 N개 이상 들어가는 경우는 없으므로!)
+                if (tmp >= N) tmp = N;
+                cnt += tmp;
+            }
+            // 만약 cnt가 K보다 같거나 크다면 현재 m보다 작은 수들이 배열의 K개 보다 더 많이 들어있다는 소리이므로 더 작은 값을 다음에 찾아봐야 함
+            if (K <= cnt) r = m;
+            // K가 cnt보다 커질 때까지 해야 함!
+            else l = m + 1;
+        }
+        System.out.println(l);
+    }
 }
