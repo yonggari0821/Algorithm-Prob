@@ -1,79 +1,72 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
-// gcd(A, B, C) == gcd(gcd(A, B) , C)
+/*
+백준 14476 최대 공약수 하나 빼기
+
+정수의 개수 N의 범위가 (4 ≤ N ≤ 1,000,000)
+
+*/
+
 public class Main {
-    static int N;
-    static int[] nums;
+    static StringBuilder sb = new StringBuilder();
+    static int exceptNum, gcdNum = -1, N;
     static int[] LtoR;
     static int[] RtoL;
-    static int[] findMax;
+    static int[] nums;
+    static int[] gcdExcept;
 
-    static int gcd(int o1, int o2)
-    {
-        // gcd 정의
-        // gcd (o1, o2) == gcd (o2, o1 % o2)
-        while (o2 != 0)
+    static int gcd(int a, int b) {
+        while (b > 0)
         {
-            int tmp = o1 % o2;
-            o1 = o2;
-            o2 = tmp;
+            int tmp = a % b;
+            a = b;
+            b = tmp;
         }
-        return o1;
+        return a;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[]args) throws IOException {
+
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
-        nums = new int[N];
+
         LtoR = new int[N];
         RtoL = new int[N];
-        findMax = new int[N];
+        nums = new int[N];
+        gcdExcept = new int[N];
+
         StringTokenizer st = new StringTokenizer(br.readLine());
-        for (int n = 0; n < N; n++)
-            nums[n] = Integer.parseInt(st.nextToken());
+        for (int i = 0; i < N; i++) nums[i] = Integer.parseInt(st.nextToken());
 
         LtoR[0] = nums[0];
-        for (int i = 1; i < N; i++)
-            LtoR[i] = gcd(LtoR[i - 1], nums[i]);
+        RtoL[N - 1] = nums[N - 1];
 
-        RtoL[N-1] = nums[N-1];
-        for (int i = N-2; i >= 0; i--)
-            RtoL[i] = gcd(RtoL[i + 1], nums[i]);
+        for (int i = 1; i < N; i++) LtoR[i] = gcd(LtoR[i - 1], nums[i]);
+        for (int i = N - 2; i >= 0; i--) RtoL[i] = gcd(RtoL[i + 1], nums[i]);
 
-        for (int i = 0; i < N; i++)
-        {
-            if (1 <= i && i <= N - 2)
-                findMax[i] = gcd(LtoR[i-1], RtoL[i+1]);
-            else
-            {
-                if (i == 0)
-                    findMax[i] = RtoL[i + 1];
-                else // i == N - 1
-                    findMax[i] = LtoR[i - 1];
+        for (int i = 0; i < N; i++) {
+            if (i == 0) gcdExcept[i] = RtoL[i + 1];
+            else if (i == N - 1) gcdExcept[i] = LtoR[i - 1];
+            else gcdExcept[i] = gcd( LtoR[i - 1], RtoL[i + 1] );
+
+            if (nums[i] % gcdExcept[i] != 0 && gcdNum < gcdExcept[i]) {
+                gcdNum = gcdExcept[i];
+                exceptNum = nums[i];
             }
+            else gcdExcept[i] = -1;
         }
 
-        int max = -1;
-        int maxindex = -1;
-        for (int i = 0; i < N; i++)
-        {
-            if (nums[i] % findMax[i] == 0)
-                findMax[i] = -1;
-            else
-            {
-                if (max < findMax[i])
-                {
-                    max = findMax[i];
-                    maxindex = i;
-                }
-            }
-        }
-        if (max != -1)
-            System.out.println(findMax[maxindex] + " " + nums[maxindex]);
-        else
-            System.out.println(-1);
+//        System.out.println("nums");
+//        System.out.println(Arrays.toString(nums));
+//        System.out.println("LtoR");
+//        System.out.println(Arrays.toString(LtoR));
+//        System.out.println("RtoL");
+//        System.out.println(Arrays.toString(RtoL));
+//        System.out.println("gcdExcept");
+//        System.out.println(Arrays.toString(gcdExcept));
+
+        if (gcdNum == -1) System.out.println(gcdNum);
+        else System.out.println(gcdNum + " " + exceptNum);
     }
 }
