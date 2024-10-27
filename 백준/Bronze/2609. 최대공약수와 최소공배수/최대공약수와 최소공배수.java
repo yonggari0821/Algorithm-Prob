@@ -1,34 +1,36 @@
 import java.io.*;
 import java.util.*;
+
+/*
+백준 2609 최대공약수와 최소공배수
+유클리드 호제법을 이용해서 풀면 됨
+추가적으로
+최소 공배수 = ( (수 1 / 최대 공약수) * (수 2 / 최대 공약수) ) * 최대 공약수
+임을 알면 편하다.
+*/
+
 public class Main {
-    static StringBuilder ans = new StringBuilder();
-    static int gcd(int o1, int o2)
+    static StringBuilder sb = new StringBuilder();
+    static int n,m;
+
+    static int gcd(int a, int b)
     {
-        // gcd by 유클리드 호제법
-        // gcd (o1, o2) == gcd (o2, o1 % o2)
-        while (o2 != 0)
+        while( b > 0 )
         {
-            int tmp = o1 % o2;
-            o1 = o2;
-            o2 = tmp;
+            int tmp = a % b;
+            a = b;
+            b = tmp;
         }
-        return o1;
+        return a;
     }
-    public static void main(String[] args) throws IOException {
+
+
+    public static void main(String[]args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        int N, K;
-        N = Integer.parseInt(st.nextToken());
-        K = Integer.parseInt(st.nextToken());
-        int gcdNum = gcd(N, K);
-        ans.append(gcdNum).append('\n');
-        int n = N / gcdNum;
-        int k = K / gcdNum;
-        ans.append(gcdNum * n * k);
-        bw.write(ans.toString());
-        br.close();
-        bw.flush();
-        bw.close();
+        n = Integer.parseInt(st.nextToken());
+        m = Integer.parseInt(st.nextToken());
+        System.out.println(gcd(n, m));
+        System.out.println(gcd(n, m) * ( (n / gcd(n, m)) * (m / gcd(n, m)) ));
     }
 }
