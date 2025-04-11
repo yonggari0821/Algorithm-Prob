@@ -1,10 +1,10 @@
 def solution(s):
-    s = s.lower()
     
-    pNum : int = s.count('p')
-    yNum : int = s.count('y')
+    pNum : int = 0;
+    yNum : int = 0;
     
-    if pNum == 0 and yNum == 0:
-        return True;
+    for c in s:
+        if c == 'p' or c == 'P': pNum += 1;
+        elif c == 'y' or c == 'Y': yNum += 1;
     
     return pNum == yNum;
