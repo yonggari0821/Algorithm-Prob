@@ -14,7 +14,6 @@ import java.util.*;
     n -> (n + 1) % 4
     
     조작하는 순서는 상관 없음!
-    => 따라서 첫행을 먼저 조작해두고, 그에 따른 나머지 행을 살펴보면서 경우의 수를 줄임
 */
 class Solution {
     
@@ -60,16 +59,19 @@ class Solution {
                 }
             }
             
-            // 첫번째 행 조작
-            for (int c = 0; c < len; c++) {
-                turnSurround(0, c, firstRow[c]);
-                tmp += firstRow[c];
-            }
-            
-            // 나머지 행 조작
-            for (int r = 1; r < len; r++) {
+            // 모든 행을 하나의 반복문으로 처리
+            for (int r = 0; r < len; r++) {
                 for (int c = 0; c < len; c++) {
-                    int turn = (4 - cur[r-1][c]) % 4;
+                    int turn;
+                    
+                    if (r == 0) {
+                        // 첫 번째 행: 미리 정해진 값 사용 (완전탐색)
+                        turn = firstRow[c];
+                    } else {
+                        // 나머지 행: 바로 위 행을 12시로 만들기 위한 그리디 계산
+                        turn = (4 - cur[r-1][c]) % 4;
+                    }
+                    
                     turnSurround(r, c, turn);
                     tmp += turn;
                 }
