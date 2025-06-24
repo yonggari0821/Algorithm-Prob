@@ -2,91 +2,68 @@ import java.util.*;
 
 class Solution {
     public int solution(int coin, int[] cards) {
-        // 카드 갯수
-        int n = cards.length;
-        // 타겟 숫자
-        int target = n + 1;
-        // 구분 idx
-        int idx = n / 3;
+        int n = cards.length; // 카드 수
+        int target = n + 1; // 타겟 넘버
+        int idx = n / 3; // 손패 vs 나머지 구분용 idx
         
-        // 초기 손패
+        // 손패
         Set<Integer> hand = new HashSet<>();
         for (int i = 0; i < idx; i++) hand.add(cards[i]);
         
-        // 후보 카드들(초기 손패 제외 카드들)
-        Set<Integer> candidates = new HashSet<>();
+        // 후보
+        Set<Integer> pool = new HashSet<>();
         
-        // 라운드
+        // 라운드 및 게임 지속 가능 여부
         int round = 1;
-        
+        boolean canPlay;
         
         while (idx < n) {
-            // 매 라운드마다 2장씩 뽑기
-            candidates.add(cards[idx]);
-            candidates.add(cards[idx + 1]);
+            // 2장 뽑아서 일단 pool에 추가
+            pool.add(cards[idx]);
+            pool.add(cards[idx + 1]);
             idx += 2;
             
-            boolean canPlay = false;
+            // 일단 게임 지속 불가능하다고 놓고
+            canPlay = false;
             
+            // 아래 우선순위에 따라서 조합해서 턴 넘어가기
             // 1순위: 손패끼리 조합 (비용 0)
-            Integer cardToRemove1 = null, cardToRemove2 = null;
-            for (int card : hand) {
-                int pair = target - card;
-                if (hand.contains(pair) && card < pair) { // 중복 방지
-                    cardToRemove1 = card;
-                    cardToRemove2 = pair;
+            for (int card : new ArrayList<>(hand)) {
+                if (hand.contains(target - card)) {
+                    hand.remove(card);
+                    hand.remove(target - card);
                     canPlay = true;
                     break;
                 }
             }
-            if (canPlay) {
-                hand.remove(cardToRemove1);
-                hand.remove(cardToRemove2);
-            }
             
-            // 2순위: 손패 + 후보카드 조합 (비용 1)
+            // 2순위: 손패 + pool 카드 조합 (비용 1 필요하므로 coin >= 1 체크!)
             if (!canPlay && coin >= 1) {
-                Integer handCard = null, candidateCard = null;
-                for (int card : hand) {
-                    int pair = target - card;
-                    if (candidates.contains(pair)) {
-                        handCard = card;
-                        candidateCard = pair;
+                for (int card : new ArrayList<>(hand)) {
+                    if (pool.contains(target - card)) {
+                        hand.remove(card);
+                        pool.remove(target - card);
+                        coin--;
                         canPlay = true;
                         break;
                     }
                 }
-                if (canPlay) {
-                    hand.remove(handCard);
-                    candidates.remove(candidateCard);
-                    coin--;
-                }
             }
             
-            // 3순위: 후보카드끼리 조합 (비용 2)
+            // 3순위: pool 카드끼리 조합 (비용 2 필요하므로 coin >= 2 체크!)
             if (!canPlay && coin >= 2) {
-                Integer candidate1 = null, candidate2 = null;
-                for (int card : candidates) {
-                    int pair = target - card;
-                    if (candidates.contains(pair) && card < pair) { // 중복 방지
-                        candidate1 = card;
-                        candidate2 = pair;
+                for (int card : new ArrayList<>(pool)) {
+                    if (pool.contains(target - card)) {
+                        pool.remove(card);
+                        pool.remove(target - card);
+                        coin -= 2;
                         canPlay = true;
                         break;
                     }
                 }
-                if (canPlay) {
-                    candidates.remove(candidate1);
-                    candidates.remove(candidate2);
-                    coin -= 2;
-                }
             }
             
-            // 조합을 만들 수 없으면 게임 종료
-            if (!canPlay) {
-                break;
-            }
-            
+            if (!canPlay) break;
             round++;
         }
         
