@@ -34,7 +34,7 @@ import java.util.*;
 
 일단 숫자를 Long.toBinaryString()에 넣어서 이진수를 만들고
 포화 이진트리의 자릿수에 비해 딸리는 만큼(gap) 0으로 채운 후에
-검증
+검증 =>
 
 */
 class Solution {
@@ -48,11 +48,16 @@ class Solution {
         char root = curStr.charAt(mid);
         // 현재 루트가 0 => 아래 전부 0
         if (root == '0') {
-            // 해당 범위가 모두 0인지 확인
-            for (int i = l; i <= r; i++) {
-                if (curStr.charAt(i) == '1') return 0;
+            // 왼쪽
+            if (l < mid ) {
+                int nl = (l + mid - 1) / 2;
+                if (curStr.charAt(nl) != '0') return 0;
             }
-            return 1; // 재귀 중단
+            // 오른쪽
+            if (mid < r) {
+                int nr = (r + mid + 1) / 2;
+                if (curStr.charAt(nr) != '0') return 0;
+            }
         }
         // 현재 1 => 아래 1 또는 0 둘 다 가능
         
