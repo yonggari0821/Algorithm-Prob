@@ -13,8 +13,8 @@ import java.util.*;
 class Solution {
     public int solution(int[][] points, int[][] routes) {
         int answer = 0;
-        Map<Integer, Integer>[] turnsAndMoves = new HashMap[20001];
-        for (int i = 0; i <= 20000; i++) {
+        Map<Integer, Integer>[] turnsAndMoves = new HashMap[19603];
+        for (int i = 0; i <= 19602; i++) {
             turnsAndMoves[i] = new HashMap<Integer, Integer>();
         }
 
