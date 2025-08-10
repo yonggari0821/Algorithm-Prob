@@ -25,7 +25,6 @@ class Solution {
     static void useCrane(int t) {
         for (int r = 0; r < row; r++) {
             for (int c = 0; c < col; c++) {
-                // 1 ~ 26
                 if (map[r][c] == t) {
                     answer--;
                     map[r][c] = 0;
@@ -67,22 +66,17 @@ class Solution {
     }
     
     public int solution(String[] storage, String[] requests) {
-        // System.out.println((int)'A'); // 65
-        // System.out.println((int)'Z'); // 90
         
         row = storage.length;
         col = storage[0].length();
         answer = row * col;
         
         map = new int[row][col];
-        List<Integer>[] where = new ArrayList[27];
-        for (int i = 0; i < 27 ; i++) where[i] = new ArrayList<Integer>();
         
         for (int r = 0; r < row; r++) {
             for (int c = 0; c < col; c++) {
                 // 1 ~ 26
                 map[r][c] = storage[r].charAt(c) - 64;
-                where[map[r][c]].add(r * col + col);
             }
         }
         
